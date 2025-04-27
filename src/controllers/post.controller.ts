@@ -1,7 +1,7 @@
-import { Request, Response } from "express";
+import { Request, Response, NextFunction } from "express";
 import prisma from "../prisma";
 
-export const createPost = async (req: Request, res: Response): Promise<void> => {
+export const createPost = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
   const { blogId, title, content } = req.body;
   const userId = (req as any).userId;
 
@@ -23,11 +23,11 @@ export const createPost = async (req: Request, res: Response): Promise<void> => 
 
     res.json(post);
   } catch (error) {
-    res.status(500).json({ message: "Xatolik post yaratishda", error });
+    next(error);
   }
 };
 
-export const getAllPosts = async (req: Request, res: Response): Promise<void> => {
+export const getAllPosts = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
   const { blogId } = req.query;
 
   try {
@@ -38,11 +38,11 @@ export const getAllPosts = async (req: Request, res: Response): Promise<void> =>
 
     res.json(posts);
   } catch (error) {
-    res.status(500).json({ message: "Xatolik postlarni olishda", error });
+    next(error);
   }
 };
 
-export const getPostById = async (req: Request, res: Response): Promise<void> => {
+export const getPostById = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
   const { id } = req.params;
 
   try {
@@ -53,11 +53,11 @@ export const getPostById = async (req: Request, res: Response): Promise<void> =>
 
     res.json(post);
   } catch (error) {
-    res.status(500).json({ message: "Xatolik postni olishda", error });
+    next(error);
   }
 };
 
-export const updatePost = async (req: Request, res: Response): Promise<void> => {
+export const updatePost = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
   const { id } = req.params;
   const { title, content } = req.body;
   const userId = (req as any).userId;
@@ -80,11 +80,11 @@ export const updatePost = async (req: Request, res: Response): Promise<void> => 
 
     res.json(updatedPost);
   } catch (error) {
-    res.status(500).json({ message: "Xatolik postni yangilashda", error });
+    next(error);
   }
 };
 
-export const deletePost = async (req: Request, res: Response): Promise<void> => {
+export const deletePost = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
   const { id } = req.params;
   const userId = (req as any).userId;
 
@@ -103,11 +103,11 @@ export const deletePost = async (req: Request, res: Response): Promise<void> => 
 
     res.json({ message: "Post o'chirildi" });
   } catch (error) {
-    res.status(500).json({ message: "Xatolik postni o'chirishda", error });
+    next(error);
   }
 };
 
-export const sortPostsByDate = async (req: Request, res: Response) => {
+export const sortPostsByDate = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
   const { blogId } = req.query;
 
   try {
@@ -118,11 +118,11 @@ export const sortPostsByDate = async (req: Request, res: Response) => {
 
     res.json(posts);
   } catch (error) {
-    res.status(500).json({ message: "Xatolik postlarni tartiblashda", error });
+    next(error);
   }
 };
 
-export const getComments = async (req: Request, res: Response) => {
+export const getComments = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
   const { postId } = req.params;
 
   try {
@@ -132,6 +132,6 @@ export const getComments = async (req: Request, res: Response) => {
 
     res.json(comments);
   } catch (error) {
-    res.status(500).json({ message: "Xatolik kommentlarni olishda", error });
+    next(error);
   }
 };

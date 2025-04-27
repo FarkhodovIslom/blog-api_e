@@ -24,6 +24,7 @@ app.use((req, res) => {
   res.status(404).json({ message: "Resource not found" });
 });
 
+
 // Centralized error handling middleware
 app.use((err: any, req: express.Request, res: express.Response, next: express.NextFunction) => {
   console.error(err);

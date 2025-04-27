@@ -1,22 +1,49 @@
 import { Request, Response, NextFunction } from "express";
 import jwt from "jsonwebtoken";
 
-interface jwtPayload {
-    userId: number;
+
+declare global {
+  namespace Express {
+    interface Request {
+      userId?: number;
+    }
+  }
 }
 
-export const authMiddleware = (req: Request, res: Response, next: NextFunction) => {
-    const token = req.cookies.token;
+interface JwtPayload {
+  userId: number;
+}
 
-    if (!token) {
-        return res.status(401).json({ message: "Unauthorized" });
+export const authMiddleware = (req: Request, res: Response, next: NextFunction): void => {
+  const token = req.cookies.token;
+
+  if (!token) {
+    res.status(401).json({ message: "Unauthorized: Token не предоставлен" });
+    return;
+  }
+
+  try {
+    
+    const jwtSecret = process.env.JWT_SECRET;
+    if (!jwtSecret) {
+      throw new Error("JWT_SECRET не настроен в окружении");
     }
 
-    try {
-        const decoded = jwt.verify(token, process.env.JWT_SECRET!) as jwtPayload;
-        (req as any).userId = decoded.userId; 
-        next();
-    } catch (error) {
-        return res.status(401).json({ message: "Unauthorized" });
+    
+    const decoded = jwt.verify(token, jwtSecret) as JwtPayload;
+    
+    
+    req.userId = decoded.userId;
+    
+    next();
+  } catch (error) {
+    
+    if (error instanceof jwt.JsonWebTokenError) {
+      res.status(401).json({ message: "Unauthorized: Невалидный токен" });
+    } else if (error instanceof jwt.TokenExpiredError) {
+      res.status(401).json({ message: "Unauthorized: Истекший токен" });
+    } else {
+      res.status(500).json({ message: "Ошибка сервера при аутентификации" });
     }
+  }
 };

@@ -1,23 +1,36 @@
-import { Router } from "express";
-import { authMiddleware } from "../middleware/auth";
-import {
-  createPost,
-  getAllPosts,
-  getPostById,
-  updatePost,
-  deletePost,
-  sortPostsByDate,
-  getComments,
-} from "../controllers/post.controller";
+import { Router, Request, Response, NextFunction } from 'express';
+import * as PostController from '../controllers/post.controller';
+import { authMiddleware } from '../middleware/auth';
 
 const router = Router();
 
-router.post("/create", authMiddleware, createPost);
-router.get("/get-all", authMiddleware, getAllPosts);
-router.get("/get-by-id/:id", authMiddleware, getPostById);
-router.put("/update/:id", authMiddleware, updatePost);
-router.delete("/delete/:id", authMiddleware, deletePost);
-router.get("/sort-by-date", authMiddleware, sortPostsByDate);
-router.get("/:postId/get-comments", authMiddleware, getComments);
+// Маршруты для постов
+router.post('/', authMiddleware, (req: Request, res: Response, next: NextFunction): void => {
+    PostController.createPost(req, res);
+});
+
+router.get('/', (req: Request, res: Response, next: NextFunction): void => {
+    PostController.getAllPosts(req, res);
+});
+
+router.get('/sort', (req: Request, res: Response, next: NextFunction): void => {
+    PostController.sortPostsByDate(req, res);
+});
+
+router.get('/:id', (req: Request, res: Response, next: NextFunction): void => {
+    PostController.getPostById(req, res);
+});
+
+router.put('/:id', authMiddleware, (req: Request, res: Response, next: NextFunction): void => {
+    PostController.updatePost(req, res);
+});
+
+router.delete('/:id', authMiddleware, (req: Request, res: Response, next: NextFunction): void => {
+    PostController.deletePost(req, res);
+});
+
+router.get('/:postId/comments', (req: Request, res: Response, next: NextFunction): void => {
+    PostController.getComments(req, res);
+});
 
 export default router;
