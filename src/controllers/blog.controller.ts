@@ -67,7 +67,7 @@ export const getBlogInfo = async (req: Request, res: Response, next: NextFunctio
 
         if (!blog) {
             res.status(404).json({ message: "Blog topilmadi" });
-            return;
+            // return;
         }
         res.status(200).json(blog);
     } catch (error) {
@@ -85,7 +85,7 @@ export const updateBlog = async (req: Request, res: Response, next: NextFunction
 
         if (!blog || blog.ownerId !== userId) {
             res.status(403).json({ message: "Update qilishga ruxsat yo'q" });
-            return;
+            // return;
         }
 
         const updatedBlog = await prisma.blog.update({
@@ -108,7 +108,7 @@ export const deleteBlog = async (req: Request, res: Response, next: NextFunction
 
         if (!blog || blog.ownerId !== userId) {
             res.status(403).json({ message: "O'chirishga ruxsat yo'q" });
-            return;
+            // return;
         }
 
         await prisma.blog.delete({ where: { id: Number(id) } });
@@ -119,7 +119,7 @@ export const deleteBlog = async (req: Request, res: Response, next: NextFunction
     }
 };
 
-export const searchBlogs = async (req: Request, res: Response) => {
+export const searchBlogs = async (req: Request, res: Response, next: NextFunction) => {
     const { name } = req.query;
 
     try {
@@ -134,35 +134,36 @@ export const searchBlogs = async (req: Request, res: Response) => {
 
         res.json(blogs);
     } catch (error) {
-        res.status(500).json({ message: "Xatolik bloglarni qidirishda", error });
+        next(error);
     }
 };
 
-export const joinBlog = async (req: Request, res: Response) => {
+export const joinBlog = async (req: Request, res: Response, next: NextFunction) => {
     const { id } = req.params;
     const userId = (req as any).userId;
 
-    try {
-        const blog = await prisma.blog.findUnique({ where: { id: Number(id) } });
+        try {
+            const blog = await prisma.blog.findUnique({ where: { id: Number(id) } });
 
-        if (!blog) {
-            return res.status(404).json({ message: "Blog topilmadi" });
+            if (!blog) {
+                // return res.status(404).json({ message: "Blog topilmadi" });
+                res.status(404).json({ message: "Blog topilmadi" });
+            }
+
+            await prisma.joinedBlog.create({
+                data: {
+                    userId,
+                    blogId: Number(id),
+                },
+            });
+
+            res.json({ message: "Blogga qo'shildingiz" });
+        } catch (error) {
+            next(error);
         }
-
-        await prisma.joinedBlog.create({
-            data: {
-                userId,
-                blogId: Number(id),
-            },
-        });
-
-        res.json({ message: "Blogga qo'shildingiz" });
-    } catch (error) {
-        res.status(500).json({ message: "Blogga qo'shilishda xatolik", error });
-    }
 };
 
-export const leaveBlog = async (req: Request, res: Response) => {
+export const leaveBlog = async (req: Request, res: Response, next: NextFunction) => {
     const { id } = req.params;
     const userId = (req as any).userId;
 
@@ -184,31 +185,32 @@ export const leaveBlog = async (req: Request, res: Response) => {
 
         res.json({ message: "Blogdan chiqdingiz" });
     } catch (error) {
-        res.status(500).json({ message: "Blogdan chiqishda xatolik", error });
+        next(error);
     }
 };
 
-export const getBlogUsers = async (req: Request, res: Response) => {
+export const getBlogUsers = async (req: Request, res: Response, next: NextFunction) => {
     const { id } = req.params;
 
-    try {
-        const blog = await prisma.blog.findUnique({
-            where: { id: Number(id) },
-            include: {
-                members: {
-                    include: {
-                        user: true,
+        try {
+            const blog = await prisma.blog.findUnique({
+                where: { id: Number(id) },
+                include: {
+                    members: {
+                        include: {
+                            user: true,
+                        },
                     },
                 },
-            },
-        });
+            });
 
-        if (!blog) {
-            return res.status(404).json({ message: "Blog topilmadi" });
+            if (!blog) {
+                // return res.status(404).json({ message: "Blog topilmadi" });
+                res.status(404).json({ message: "Blog topilmadi" });
+            }
+
+            res.json(blog.members.map(member => member.user));
+        } catch (error) {
+            next(error);
         }
-
-        res.json(blog.members.map(member => member.user));
-    } catch (error) {
-        res.status(500).json({ message: "Blog foydalanuvchilarini olishda xatolik", error });
-    }
-}
+};

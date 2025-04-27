@@ -16,8 +16,12 @@ import {
 
 const router = Router();
 
-const wrapAsync = (fn: any) => (req: any, res: any, next: any) => {
-  Promise.resolve(fn(req, res, next)).catch(next);
+import { Request, Response, NextFunction, RequestHandler } from 'express';
+
+const wrapAsync = (fn: RequestHandler): RequestHandler => {
+  return (req: Request, res: Response, next: NextFunction) => {
+    return Promise.resolve(fn(req, res, next)).catch(next);
+  };
 };
 
 router.post("/create", authMiddleware, wrapAsync(createBlog));
