@@ -1,7 +1,7 @@
 import { Request, Response } from "express";
 import prisma from "../prisma";
 
-export const createComment = async (req: Request, res: Response) => {
+export const createComment = async (req: Request, res: Response): Promise<void> => {
   const { postId, text } = req.body;
   const userId = (req as any).userId;
 
@@ -11,7 +11,8 @@ export const createComment = async (req: Request, res: Response) => {
     });
 
     if (!post) {
-      return res.status(404).json({ message: "Post topilmadi" });
+      res.status(404).json({ message: "Post topilmadi" });
+      return;
     }
 
     const comment = await prisma.comment.create({
@@ -28,7 +29,7 @@ export const createComment = async (req: Request, res: Response) => {
   }
 };
 
-export const updateComment = async (req: Request, res: Response) => {
+export const updateComment = async (req: Request, res: Response): Promise<void> => {
   const { id } = req.params;
   const { text } = req.body;
   const userId = (req as any).userId;
@@ -39,7 +40,8 @@ export const updateComment = async (req: Request, res: Response) => {
     });
 
     if (!comment || comment.userId !== userId) {
-      return res.status(403).json({ message: "Faqat o'z commentini update qila oladi" });
+      res.status(403).json({ message: "Faqat o'z commentini update qila oladi" });
+      return;
     }
 
     const updatedComment = await prisma.comment.update({
@@ -53,7 +55,7 @@ export const updateComment = async (req: Request, res: Response) => {
   }
 };
 
-export const deleteComment = async (req: Request, res: Response) => {
+export const deleteComment = async (req: Request, res: Response): Promise<void> => {
   const { id } = req.params;
   const userId = (req as any).userId;
 
@@ -63,7 +65,8 @@ export const deleteComment = async (req: Request, res: Response) => {
     });
 
     if (!comment || comment.userId !== userId) {
-      return res.status(403).json({ message: "Faqat o'z commentini delete qila oladi" });
+      res.status(403).json({ message: "Faqat o'z commentini delete qila oladi" });
+      return;
     }
 
     await prisma.comment.delete({ where: { id: Number(id) } });

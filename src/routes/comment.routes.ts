@@ -1,12 +1,15 @@
 import { Router } from "express";
 import { authMiddleware } from "../middleware/auth";
-import asyncHandler from "../utils/asyncHandler";
 import { createComment, updateComment, deleteComment } from "../controllers/comment.controller";
 
 const router = Router();
 
-router.post("/create", authMiddleware, asyncHandler(createComment));
-router.put("/update/:id", authMiddleware, asyncHandler(updateComment));
-router.delete("/delete/:id", authMiddleware, asyncHandler(deleteComment));
+const wrapAsync = (fn: any) => (req: any, res: any, next: any) => {
+  Promise.resolve(fn(req, res, next)).catch(next);
+};
+
+router.post("/create", authMiddleware, wrapAsync(createComment));
+router.put("/update/:id", authMiddleware, wrapAsync(updateComment));
+router.delete("/delete/:id", authMiddleware, wrapAsync(deleteComment));
 
 export default router;

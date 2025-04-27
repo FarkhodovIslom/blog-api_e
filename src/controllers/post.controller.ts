@@ -1,7 +1,7 @@
 import { Request, Response } from "express";
 import prisma from "../prisma";
 
-export const createPost = async (req: Request, res: Response) => {
+export const createPost = async (req: Request, res: Response): Promise<void> => {
   const { blogId, title, content } = req.body;
   const userId = (req as any).userId;
 
@@ -9,7 +9,8 @@ export const createPost = async (req: Request, res: Response) => {
     const blog = await prisma.blog.findUnique({ where: { id: blogId } });
 
     if (!blog || blog.ownerId !== userId) {
-      return res.status(403).json({ message: "Faqat blog egasi post qila oladi" });
+      res.status(403).json({ message: "Faqat blog egasi post qila oladi" });
+      return;
     }
 
     const post = await prisma.post.create({
@@ -26,7 +27,7 @@ export const createPost = async (req: Request, res: Response) => {
   }
 };
 
-export const getAllPosts = async (req: Request, res: Response) => {
+export const getAllPosts = async (req: Request, res: Response): Promise<void> => {
   const { blogId } = req.query;
 
   try {
@@ -41,7 +42,7 @@ export const getAllPosts = async (req: Request, res: Response) => {
   }
 };
 
-export const getPostById = async (req: Request, res: Response) => {
+export const getPostById = async (req: Request, res: Response): Promise<void> => {
   const { id } = req.params;
 
   try {
@@ -56,7 +57,7 @@ export const getPostById = async (req: Request, res: Response) => {
   }
 };
 
-export const updatePost = async (req: Request, res: Response) => {
+export const updatePost = async (req: Request, res: Response): Promise<void> => {
   const { id } = req.params;
   const { title, content } = req.body;
   const userId = (req as any).userId;
@@ -68,7 +69,8 @@ export const updatePost = async (req: Request, res: Response) => {
     });
 
     if (!post || post.blog.ownerId !== userId) {
-      return res.status(403).json({ message: "Faqat blog egasi update qila oladi" });
+      res.status(403).json({ message: "Faqat blog egasi update qila oladi" });
+      return;
     }
 
     const updatedPost = await prisma.post.update({
@@ -82,7 +84,7 @@ export const updatePost = async (req: Request, res: Response) => {
   }
 };
 
-export const deletePost = async (req: Request, res: Response) => {
+export const deletePost = async (req: Request, res: Response): Promise<void> => {
   const { id } = req.params;
   const userId = (req as any).userId;
 
@@ -93,7 +95,8 @@ export const deletePost = async (req: Request, res: Response) => {
     });
 
     if (!post || post.blog.ownerId !== userId) {
-      return res.status(403).json({ message: "Faqat blog egasi delete qila oladi" });
+      res.status(403).json({ message: "Faqat blog egasi delete qila oladi" });
+      return;
     }
 
     await prisma.post.delete({ where: { id: Number(id) } });

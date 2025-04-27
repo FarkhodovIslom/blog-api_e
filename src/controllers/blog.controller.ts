@@ -1,7 +1,7 @@
-import { Request, Response } from "express";
+import { Request, Response, NextFunction } from "express";
 import prisma from "../prisma";
 
-export const createBlog = async (req: Request, res: Response) => {
+export const createBlog = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
     const { name } = req.body;
     const userId = (req as any).userId;
 
@@ -17,11 +17,11 @@ export const createBlog = async (req: Request, res: Response) => {
         });
         res.status(201).json(blog);
     } catch (error) {
-        res.status(500).json({ message: "Xatolik blog yaratishda", error });
+        next(error);
     }
 };
 
-export const getMyBlogs = async (req: Request, res: Response) => {
+export const getMyBlogs = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
     const userId = (req as any).userId;
 
     try {
@@ -30,11 +30,11 @@ export const getMyBlogs = async (req: Request, res: Response) => {
         });
         res.status(200).json(blogs);
     } catch (error) {
-        res.status(500).json({ message: "Xatolik bloglarni olishda", error });
+        next(error);
     }
 }
 
-export const getMyJoinedBlogs = async (req: Request, res: Response) => {
+export const getMyJoinedBlogs = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
     const userId = (req as any).userId;
 
     try {
@@ -45,11 +45,11 @@ export const getMyJoinedBlogs = async (req: Request, res: Response) => {
 
         res.json(joined.map(j => j.blog));
     } catch (error) {
-        res.status(500).json({ message: "Xatolik qo'shilgan bloglarni olishda", error });
+        next(error);
     }
 };
 
-export const getBlogInfo = async (req: Request, res: Response) => {
+export const getBlogInfo = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
     const { id } = req.params;
 
     try {
@@ -66,15 +66,16 @@ export const getBlogInfo = async (req: Request, res: Response) => {
         });
 
         if (!blog) {
-            return res.status(404).json({ message: "Blog topilmadi" });
+            res.status(404).json({ message: "Blog topilmadi" });
+            return;
         }
         res.status(200).json(blog);
     } catch (error) {
-        res.status(500).json({ message: "Xatolik blog ma'lumotlarini olishda", error });
+        next(error);
     }
 };
 
-export const updateBlog = async (req: Request, res: Response) => {
+export const updateBlog = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
     const { id } = req.params;
     const { name } = req.body;
     const userId = (req as any).userId;
@@ -83,7 +84,8 @@ export const updateBlog = async (req: Request, res: Response) => {
         const blog = await prisma.blog.findUnique({ where: { id: Number(id) } });
 
         if (!blog || blog.ownerId !== userId) {
-            return res.status(403).json({ message: "Update qilishga ruxsat yo'q" });
+            res.status(403).json({ message: "Update qilishga ruxsat yo'q" });
+            return;
         }
 
         const updatedBlog = await prisma.blog.update({
@@ -93,11 +95,11 @@ export const updateBlog = async (req: Request, res: Response) => {
 
         res.json(updatedBlog);
     } catch (error) {
-        res.status(500).json({ message: "Xatolik blogni yangilashda", error });
+        next(error);
     }
 };
 
-export const deleteBlog = async (req: Request, res: Response) => {
+export const deleteBlog = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
     const { id } = req.params;
     const userId = (req as any).userId;
 
@@ -105,14 +107,15 @@ export const deleteBlog = async (req: Request, res: Response) => {
         const blog = await prisma.blog.findUnique({ where: { id: Number(id) } });
 
         if (!blog || blog.ownerId !== userId) {
-            return res.status(403).json({ message: "O'chirishga ruxsat yo'q" });
+            res.status(403).json({ message: "O'chirishga ruxsat yo'q" });
+            return;
         }
 
         await prisma.blog.delete({ where: { id: Number(id) } });
 
         res.json({ message: "Blog o'chirildi" });
     } catch (error) {
-        res.status(500).json({ message: "Xatolik blogni o'chirishda", error });
+        next(error);
     }
 };
 

@@ -1,6 +1,5 @@
 import { Router } from 'express';
 import { authMiddleware } from '../middleware/auth';
-import asyncHandler from '../utils/asyncHandler';
 
 import {
     createBlog,
@@ -17,15 +16,19 @@ import {
 
 const router = Router();
 
-router.post("/create", authMiddleware, asyncHandler(createBlog));
-router.get("/get-my-blogs", authMiddleware, asyncHandler(getMyBlogs));
-router.get("/get-my-joined-blogs", authMiddleware, asyncHandler(getMyJoinedBlogs));
-router.get("/get-blog-info/:id", authMiddleware, asyncHandler(getBlogInfo));
-router.put("/update/:id", authMiddleware, asyncHandler(updateBlog));
-router.delete("/delete/:id", authMiddleware, asyncHandler(deleteBlog));
-router.get("/search", authMiddleware, asyncHandler(searchBlogs));
-router.post("/join-blog", authMiddleware, asyncHandler(joinBlog));
-router.post("/leave-blog", authMiddleware, asyncHandler(leaveBlog));
-router.get("/get-users/:blogId", authMiddleware, asyncHandler(getBlogUsers));
+const wrapAsync = (fn: any) => (req: any, res: any, next: any) => {
+  Promise.resolve(fn(req, res, next)).catch(next);
+};
+
+router.post("/create", authMiddleware, wrapAsync(createBlog));
+router.get("/get-my-blogs", authMiddleware, wrapAsync(getMyBlogs));
+router.get("/get-my-joined-blogs", authMiddleware, wrapAsync(getMyJoinedBlogs));
+router.get("/get-blog-info/:id", authMiddleware, wrapAsync(getBlogInfo));
+router.put("/update/:id", authMiddleware, wrapAsync(updateBlog));
+router.delete("/delete/:id", authMiddleware, wrapAsync(deleteBlog));
+router.get("/search", authMiddleware, wrapAsync(searchBlogs));
+router.post("/join-blog", authMiddleware, wrapAsync(joinBlog));
+router.post("/leave-blog", authMiddleware, wrapAsync(leaveBlog));
+router.get("/get-users/:blogId", authMiddleware, wrapAsync(getBlogUsers));
 
 export default router;
