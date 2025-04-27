@@ -1,0 +1,414 @@
+{
+  "info": {
+    "name": "Blog API Collection",
+    "_postman_id": "12345678-abcd-efgh-ijkl-1234567890ab",
+    "description": "Postman collection for Blog API",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+  },
+  "item": [
+    {
+      "name": "Auth",
+      "item": [
+        {
+          "name": "Register",
+          "request": {
+            "method": "POST",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/api/auth/register",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "auth", "register"]
+            },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"username\": \"string\",\n  \"email\": \"string\",\n  \"password\": \"string\"\n}"
+            }
+          }
+        },
+        {
+          "name": "Login",
+          "request": {
+            "method": "POST",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/api/auth/login",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "auth", "login"]
+            },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"email\": \"string\",\n  \"password\": \"string\"\n}"
+            }
+          }
+        }
+      ]
+    },
+    {
+      "name": "Blogs",
+      "item": [
+        {
+          "name": "Create Blog",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{token}}",
+                "type": "text"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/blogs/",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "blogs"]
+            },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"title\": \"string\",\n  \"description\": \"string\"\n}"
+            }
+          }
+        },
+        {
+          "name": "Get My Blogs",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{token}}",
+                "type": "text"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/blogs/my",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "blogs", "my"]
+            }
+          }
+        },
+        {
+          "name": "Get Joined Blogs",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{token}}",
+                "type": "text"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/blogs/joined",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "blogs", "joined"]
+            }
+          }
+        },
+        {
+          "name": "Search Blogs",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/api/blogs/search",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "blogs", "search"]
+            }
+          }
+        },
+        {
+          "name": "Get Blog Info",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/api/blogs/:id",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "blogs", ":id"]
+            }
+          }
+        },
+        {
+          "name": "Update Blog",
+          "request": {
+            "method": "PUT",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{token}}",
+                "type": "text"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/blogs/:id",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "blogs", ":id"]
+            },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"title\": \"string\",\n  \"description\": \"string\"\n}"
+            }
+          }
+        },
+        {
+          "name": "Delete Blog",
+          "request": {
+            "method": "DELETE",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{token}}",
+                "type": "text"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/blogs/:id",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "blogs", ":id"]
+            }
+          }
+        },
+        {
+          "name": "Join Blog",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{token}}",
+                "type": "text"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/blogs/:id/join",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "blogs", ":id", "join"]
+            }
+          }
+        },
+        {
+          "name": "Leave Blog",
+          "request": {
+            "method": "DELETE",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{token}}",
+                "type": "text"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/blogs/:id/leave",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "blogs", ":id", "leave"]
+            }
+          }
+        },
+        {
+          "name": "Get Blog Users",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/api/blogs/:id/users",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "blogs", ":id", "users"]
+            }
+          }
+        }
+      ]
+    },
+    {
+      "name": "Posts",
+      "item": [
+        {
+          "name": "Create Post",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{token}}",
+                "type": "text"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/posts/",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "posts"]
+            },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"title\": \"string\",\n  \"content\": \"string\",\n  \"blogId\": \"number\"\n}"
+            }
+          }
+        },
+        {
+          "name": "Get All Posts",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/api/posts/",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "posts"]
+            }
+          }
+        },
+        {
+          "name": "Sort Posts By Date",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/api/posts/sort",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "posts", "sort"]
+            }
+          }
+        },
+        {
+          "name": "Get Post By ID",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/api/posts/:id",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "posts", ":id"]
+            }
+          }
+        },
+        {
+          "name": "Update Post",
+          "request": {
+            "method": "PUT",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{token}}",
+                "type": "text"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/posts/:id",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "posts", ":id"]
+            },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"title\": \"string\",\n  \"content\": \"string\"\n}"
+            }
+          }
+        },
+        {
+          "name": "Delete Post",
+          "request": {
+            "method": "DELETE",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{token}}",
+                "type": "text"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/posts/:id",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "posts", ":id"]
+            }
+          }
+        },
+        {
+          "name": "Get Comments for Post",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/api/posts/:postId/comments",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "posts", ":postId", "comments"]
+            }
+          }
+        }
+      ]
+    },
+    {
+      "name": "Comments",
+      "item": [
+        {
+          "name": "Create Comment",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{token}}",
+                "type": "text"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/comments/create",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "comments", "create"]
+            },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"postId\": \"number\",\n  \"text\": \"string\"\n}"
+            }
+          }
+        },
+        {
+          "name": "Update Comment",
+          "request": {
+            "method": "PUT",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{token}}",
+                "type": "text"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/comments/update/:id",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "comments", "update", ":id"]
+            },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"text\": \"string\"\n}"
+            }
+          }
+        },
+        {
+          "name": "Delete Comment",
+          "request": {
+            "method": "DELETE",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{token}}",
+                "type": "text"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/comments/delete/:id",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "comments", "delete", ":id"]
+            }
+          }
+        }
+      ]
+    }
+  ],
+  "variable": [
+    {
+      "key": "baseUrl",
+      "value": "http://localhost:3000"
+    },
+    {
+      "key": "token",
+      "value": ""
+    }
+  ]
+}
