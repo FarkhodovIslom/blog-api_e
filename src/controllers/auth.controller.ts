@@ -34,31 +34,52 @@ export const register = async (req: Request, res: Response, next: NextFunction):
 
 
 export const login = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
-    const { email, password } = req.body;
-
     try {
-        const user = await prisma.user.findUnique({
-            where: { email },
-        });
-
-        if (!user) {
-            res.status(400).json({ message: "Email yoki parol noto'g'ri" });
-            return;
+      const { email, password } = req.body;
+      
+      
+      if (!email) {
+        res.status(400).json({ message: "Email majburiy" });
+        return;
+      }
+      
+      
+      const user = await prisma.user.findUnique({
+        where: {
+          email: email  
         }
-
-        const isPasswordValid = await bcrypt.compare(password, user.password);
-
-        if (!isPasswordValid) {
-            res.status(400).json({ message: "Email yoki parol noto'g'ri" });
-            return;
-        }
-
-        const token = jwt.sign({ userId: user.id }, process.env.JWT_SECRET!, { expiresIn: "1d" });
-
-        res.cookie("token", token, { httpOnly: true, secure: false });
-
-        res.status(200).json({ message: "Muvaffaqiyatli login qilindi!", token });
+      });
+      
+      
+      if (!user) {
+        res.status(404).json({ message: "User topilmadi" });
+        return;
+      }
+      
+      
+      const isPasswordValid = await bcrypt.compare(password, user.password);
+      
+      if (!isPasswordValid) {
+        res.status(401).json({ message: "Parol xato" });
+        return;
+      }
+      
+      
+      const token = jwt.sign(
+        { userId: user.id },
+        process.env.JWT_SECRET || "fallback_secret",
+        { expiresIn: "7d" }
+      );
+      
+      res.cookie("token", token, {
+        httpOnly: true,
+        maxAge: 7 * 24 * 60 * 60 * 1000 
+      });
+      
+      const { password: _, ...userWithoutPassword } = user;
+      res.status(200).json(userWithoutPassword);
     } catch (error) {
-        next(error);
+      next(error);
     }
-};
+  };
+  
